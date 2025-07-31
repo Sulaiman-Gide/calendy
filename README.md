@@ -1,97 +1,218 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Kalendi - Modern Calendar App
 
-# Getting Started
+A beautiful, modern calendar application built with React Native, featuring event management, Supabase integration, and push notifications.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Features
 
-## Step 1: Start Metro
+- 📅 **Beautiful Calendar Interface** - Clean, modern calendar view with event indicators
+- 🎨 **Dark/Light Theme Support** - Automatic theme switching based on system preferences
+- 📝 **Event Management** - Add, edit, and delete events with rich details
+- 🔔 **Push Notifications** - Automatic reminders for events
+- ☁️ **Cloud Sync** - Events stored in Supabase database
+- 📱 **Responsive Design** - Optimized for mobile devices
+- 🎯 **Modern UI/UX** - Clean, intuitive interface inspired by iOS Calendar
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Screenshots
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+_Screenshots will be added here_
 
-```sh
-# Using npm
-npm start
+## Tech Stack
 
-# OR using Yarn
-yarn start
-```
+- **React Native** - Cross-platform mobile development
+- **TypeScript** - Type-safe development
+- **Supabase** - Backend as a Service (Database & Auth)
+- **React Native Vector Icons** - Beautiful icons
+- **React Native Modal** - Smooth modal interactions
+- **React Native Date Picker** - Native date/time selection
+- **React Native Push Notification** - Local notifications
 
-## Step 2: Build and run your app
+## Prerequisites
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+- Node.js (v18 or higher)
+- React Native CLI
+- iOS Simulator (for iOS development)
+- Android Studio & Android SDK (for Android development)
+- Supabase account
 
-### Android
+## Installation
 
-```sh
-# Using npm
-npm run android
+1. **Clone the repository**
 
-# OR using Yarn
-yarn android
-```
+   ```bash
+   git clone <repository-url>
+   cd calendy
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **iOS Setup** (macOS only)
+
+   ```bash
+   cd ios
+   pod install
+   cd ..
+   ```
+
+4. **Configure Supabase**
+
+   - Create a new Supabase project at [supabase.com](https://supabase.com)
+   - Get your project URL and anon key
+   - Update `src/services/supabase.ts` with your credentials:
+
+   ```typescript
+   const supabaseUrl = 'YOUR_SUPABASE_URL';
+   const supabaseAnonKey = 'YOUR_SUPABASE_ANON_KEY';
+   ```
+
+5. **Create Database Tables**
+   Run the following SQL in your Supabase SQL editor:
+
+   ```sql
+   -- Create events table
+   CREATE TABLE events (
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     title TEXT NOT NULL,
+     description TEXT,
+     start_date TIMESTAMP WITH TIME ZONE NOT NULL,
+     end_date TIMESTAMP WITH TIME ZONE NOT NULL,
+     all_day BOOLEAN DEFAULT FALSE,
+     location TEXT,
+     color TEXT NOT NULL,
+     reminder_time INTEGER,
+     user_id UUID NOT NULL,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Create users table
+   CREATE TABLE users (
+     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+     email TEXT UNIQUE NOT NULL,
+     name TEXT NOT NULL,
+     avatar TEXT,
+     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+   );
+
+   -- Enable Row Level Security
+   ALTER TABLE events ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+   -- Create policies
+   CREATE POLICY "Users can view their own events" ON events
+     FOR SELECT USING (auth.uid() = user_id);
+
+   CREATE POLICY "Users can insert their own events" ON events
+     FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+   CREATE POLICY "Users can update their own events" ON events
+     FOR UPDATE USING (auth.uid() = user_id);
+
+   CREATE POLICY "Users can delete their own events" ON events
+     FOR DELETE USING (auth.uid() = user_id);
+   ```
+
+## Running the App
 
 ### iOS
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+```bash
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Android
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```bash
+npm run android
+```
 
-## Step 3: Modify your app
+### Metro Bundler
 
-Now that you have successfully run the app, let's make changes!
+```bash
+npm start
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Project Structure
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```
+src/
+├── components/          # Reusable UI components
+│   ├── CalendarHeader.tsx
+│   ├── CalendarGrid.tsx
+│   ├── EventCard.tsx
+│   └── AddEventModal.tsx
+├── screens/            # Screen components
+│   └── CalendarScreen.tsx
+├── services/           # API and external services
+│   ├── supabase.ts
+│   └── notificationService.ts
+├── hooks/              # Custom React hooks
+│   └── useTheme.ts
+├── utils/              # Utility functions
+│   └── dateUtils.ts
+├── types/              # TypeScript type definitions
+│   └── index.ts
+└── constants/          # App constants
+    └── theme.ts
+```
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+## Features in Detail
 
-## Congratulations! :tada:
+### Calendar View
 
-You've successfully run and modified your React Native App. :partying_face:
+- Monthly calendar grid with event indicators
+- Smooth navigation between months
+- Today button for quick navigation
+- Event dots showing event count per day
 
-### Now what?
+### Event Management
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+- Add events with title, description, location
+- Set start and end times
+- All-day event support
+- Color coding for events
+- Reminder settings (5 min, 15 min, 30 min, 1 hour, 1 day)
 
-# Troubleshooting
+### Notifications
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+- Local push notifications for event reminders
+- Configurable reminder times
+- Automatic notification scheduling
 
-# Learn More
+### Theme Support
 
-To learn more about React Native, take a look at the following resources:
+- Automatic dark/light mode detection
+- Consistent theming throughout the app
+- Beautiful color palette
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Configuration
+
+### Supabase Setup
+
+1. Create a new Supabase project
+2. Enable Row Level Security (RLS)
+3. Create the required tables (see Installation section)
+4. Update the credentials in `src/services/supabase.ts`
+
+### Push Notifications
+
+The app uses `react-native-push-notification` for local notifications. No additional setup is required for basic functionality.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## Support
+
+If you encounter any issues or have questions, please open an issue on GitHub.
+
+---
+
+**Kalendi** - Your modern calendar companion 📅✨
