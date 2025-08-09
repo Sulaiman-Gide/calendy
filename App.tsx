@@ -6,17 +6,31 @@
  */
 
 import React, { useEffect } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar, useColorScheme, Platform, LogBox } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CalendarScreen } from './src/screens/CalendarScreen';
 import { fcmService } from './src/services/fcmService';
+
+// Ignore Firebase related warnings in development
+if (__DEV__) {
+  LogBox.ignoreLogs([
+    'No Firebase App',
+    'Firebase is not initialized',
+    'FirebaseApp is not initialized',
+  ]);
+}
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
-    // Initialize FCM service
-    fcmService.requestUserPermission();
+    if (Platform.OS === 'android' || !__DEV__) {
+      fcmService.requestUserPermission().catch(error => {
+        console.warn('FCM initialization failed:', error);
+      });
+    } else {
+      console.log('FCM is disabled for iOS in development');
+    }
   }, []);
 
   return (

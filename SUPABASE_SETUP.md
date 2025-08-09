@@ -10,7 +10,7 @@ This guide will help you set up Supabase for the Kalendi calendar application wi
 4. Click "New Project"
 5. Choose your organization
 6. Enter project details:
-   - **Name**: `kalendi-calendar`
+   - **Name**: `calendy`
    - **Database Password**: Choose a strong password
    - **Region**: Choose closest to your users
 7. Click "Create new project"

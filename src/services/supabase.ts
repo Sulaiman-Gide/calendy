@@ -8,12 +8,6 @@ const supabaseUrl = 'https://txfvlcrivhtlinsrefqr.supabase.co';
 const supabaseAnonKey =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4ZnZsY3Jpdmh0bGluc3JlZnFyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwMDU5NzAsImV4cCI6MjA2ODU4MTk3MH0.YO0NuZ7QRgxNIR_dX_M7VuLGl0DFbfvGHfsFyMFhJ0E';
 
-// ⚠️  IMPORTANT: Replace the above values with your actual Supabase credentials
-// 1. Go to your Supabase dashboard
-// 2. Navigate to Settings → API
-// 3. Copy the Project URL and Anon Key
-// 4. Replace the values above
-
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     storage: AsyncStorage,

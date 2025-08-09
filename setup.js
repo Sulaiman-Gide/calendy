@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🎉 Welcome to Kalendi Setup!');
+console.log('🎉 Welcome to Calendy Setup!');
 console.log(
   'This will help you configure Supabase and Firebase for your calendar app.\n',
 );
